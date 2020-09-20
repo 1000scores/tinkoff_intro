@@ -10,11 +10,6 @@ def read_model(path='big_model.pickle'):
         return temp_model
 
 
-parser = argparse.ArgumentParser()
-parser.add_argument("--path",
-                    help="Path to model")
-
-
 model = read_model()
 
 start_word = [*model.data][random.randint(0, len(model.data) - 1)]
