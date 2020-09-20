@@ -34,8 +34,6 @@ class Model:
         self.language = language
         self.sentence_end = {'!', '.', '\'', '"', ':', ';', ')', '(', '-'}
         self.data = {}
-        if len(self.data) == 0:
-            self.train()
 
     def save_text(self, big_lst):
         for cur_lst_of_tokens in big_lst:
@@ -108,6 +106,3 @@ class Model:
         self.sort_data()
         self.save_model()
         print('Training finished!')
-
-
-temp = Model()
