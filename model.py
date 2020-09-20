@@ -36,18 +36,22 @@ class Model:
         self.data = {}
         self.train()
 
-    def save_text(self, big_lst):
+    def save_text(self, big_lst, words_as_key):
         for cur_lst_of_tokens in big_lst:
             for index, token in enumerate(cur_lst_of_tokens):
-                if index == 0:
+                if index < words_as_key:
                     continue
-                if cur_lst_of_tokens[index - 1] not in self.data:
-                    self.data[cur_lst_of_tokens[index - 1]] = {}
+                cur_key = ''
+                for i in range(1, words_as_key):
+                    cur_key += cur_lst_of_tokens[index - i]
 
-                if token in self.data[cur_lst_of_tokens[index - 1]]:
-                    self.data[cur_lst_of_tokens[index - 1]][token] += 1
+                if cur_key not in self.data:
+                    self.data[cur_key] = {}
+
+                if token in self.data[cur_key]:
+                    self.data[cur_key][token] += 1
                 else:
-                    self.data[cur_lst_of_tokens[index - 1]][token] = 1
+                    self.data[cur_key][token] = 1
 
     def clean_text(self, text):
         lst = []
@@ -68,20 +72,20 @@ class Model:
 
         return lst
 
-    def add_text(self, text):
+    def add_text(self, text, words_as_key):
         text = text.lower()
         lst_of_texts = self.clean_text(text)
         big_lst = self.tokenize(lst_of_texts)
-        self.save_text(big_lst)
+        self.save_text(big_lst, words_as_key)
 
-    def add_data(self):
+    def add_data(self, words_as_key):
         for file in listdir('data/'):
             if file[0] == '.':
                 continue
             if '.csv' in file:
-                self.add_text(self.read_csv(f'data/{file}'))
+                self.add_text(self.read_csv(f'data/{file}'), words_as_key)
             elif '.txt' in file:
-                self.add_text(self.read_txt(f'data/{file}'))
+                self.add_text(self.read_txt(f'data/{file}'), words_as_key)
             print(f'Added {file}')
 
     def sort_data(self, words_for_token=10):
@@ -101,9 +105,9 @@ class Model:
         with open(path, 'wb') as f:
             pickle.dump(self.data, f)
 
-    def train(self):
+    def train(self, words_as_key=2):
         print('Starting training!')
-        self.add_data()
+        self.add_data(words_as_key)
         self.sort_data()
         self.save_data()
         print('Training finished!')
