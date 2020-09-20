@@ -10,9 +10,21 @@ def read_model(path='big_model.pickle'):
         return temp_model
 
 
-model = read_model()
+parser = argparse.ArgumentParser()
 
-start_word = [*model.data][random.randint(0, len(model.data) - 1)]
+parser.add_argument("--path",
+                    help="path to model", default='big_model.pickle')
+parser.add_argument("--prefix",
+                    help="prefix", default='no prefix')
+
+args = parser.parse_args()
+
+
+model = read_model(path=args.path)
+
+start_word = args.prefix.lower()
+if args.prefix == 'no prefix':
+    start_word = [*model.data][random.randint(0, len(model.data) - 1)]
 
 text = start_word + ' '
 for _ in range(40):
